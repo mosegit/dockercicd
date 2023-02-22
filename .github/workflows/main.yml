@@ -26,4 +26,4 @@ jobs:
           context: C:\Users\Moisht\Documents\Script Docker-Terraform\DockerCICD
           push: true
           tags: index.docker.io/${{ secrets.ContainerUsername }}/dockercicdnginx:${{ github.sha }}
-          file: Dockerfile
+          file: C:\Users\Moisht\Documents\Script Docker-Terraform\DockerCICD\Dockerfile
