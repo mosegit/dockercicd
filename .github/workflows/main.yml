@@ -16,7 +16,7 @@ jobs:
       - name: Log in to container registry
         uses: docker/login-action@v1
         with:
-          registry: https://index.docker.io/v1/
+          registry: https://hub.docker.com/repository/docker/moseiet/dockercicdnginx/general
           username: ${{ secrets.ContainerUsername }}
           password: ${{ secrets.ContainerPassword }}
 
