@@ -26,7 +26,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: username/myimage:latest
+          tags: moseiet/tes1t:latest
         env:
           DOCKER_BUILDKIT: 0
           # Disables Docker Buildx and uses the default Docker engine
@@ -40,7 +40,7 @@ jobs:
           context: .
           push: true
           manifest: true
-          tags: username/myimage:latest
+          tags: moseiet/tes1t:latest
         env:
           DOCKER_BUILDKIT: 0
           # Disables Docker Buildx and uses the default Docker engine
