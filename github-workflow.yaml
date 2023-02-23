@@ -1,0 +1,108 @@
+#Questo e' un workflow per eseguire una build & deploy container app to Azure Web App - moseiet/dockercidcnginx
+#main.yaml 
+name: Build and deploy container app to Azure Web App - moseiet/tes1t
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      
+      - name: Log in to container registry
+        uses: docker/login-action@v1
+        with:
+          registry: https://index.docker.io/v1/
+          username: ${{ secrets.ContainerUsername }}
+          password: ${{ secrets.ContainerPassword }}
+      - name: Build and push container image to registry
+        uses: docker/build-push-action@v2
+        with:
+          context: C:\Users\Moisht\Documents\Script Docker-Terraform\DockerCICD
+          push: true
+          tags: index.docker.io/${{ secrets.ContainerUsername }}/tes1t:${{ github.sha }}
+          file: C:\Users\Moisht\Documents\Script Docker-Terraform\DockerCICD\Dockerfile
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: 'production'
+      url: ${{ steps.deply-to-webapp.outpunts.webapp-url }}
+
+    steps:
+      - name: Deploy to Azure Web App
+        id: deply-to-webapp
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: 'moseietdockercicd'
+          slot-name: 'production'
+          publish-profile: ${{ secrets.PublishProfile }}
+          images: 'index.docker.io/${{ secrets.ContainerUsername }}/dockercicdnginx:${{ github.sha}}'
+
+          # Commento dello script
+# Nome
+name: Build and deploy container app to Azure Web App - moseiet/dockercicdnginx
+# Trigger sul branch main oppure "workflow_dispatch:path" per eseguirlo manualmente
+on:
+  Push:
+    branches:
+      - main
+  workflow_dispatch:
+# Job1 eseguito su una macchina ubuntu
+jobs:
+  build:
+    runs-on: ubuntu-latest
+# Fa il checkout dei sorgenti e il log-in su docker-hub
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Log in to container registry
+        uses: docker/login-action@v1
+        with: 
+          registry: https://index.docker.io/v1/
+          username: ${{ secrets.ContainerUsername }} #username e password da settare in settings>Secrets and variables>Actions
+          password: ${{ secrets.ContainerPassword }}
+# Questa action fa la build e la push dell'immagine su docker-hub
+      - name: Build and push container image to registry
+        uses: docker/build-push-action@v2
+        with:
+          context: ./ # Path dove girera' il comand build di dockerhub
+          push: true  # Dopo aver creato l'immagine, verrà subito pushata
+          tags: index.docker.io/${{ secrets.ContainerUsername }}/dockercicdnginx:${{ github.sha }} # Nomenclatura di default per Docker-hub
+          # + Username + Repository + Sha di github (Secure Hash Algoritm )
+          file: /Dockerfile #Path del DockerFile su dockerhub
+# Sezione Deploy, aspettiamo in needs che build finisca. In Ambiente virtuale chiamato "production"
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: 'production'
+      url: ${{ steps.deply-to-webapp.outpunts.webapp-url }}
+# Richiamo Task per le Web App di Azure
+    steps:
+      - name: Deploy to Azure Web App
+        id: deply-to-webapp
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: 'moseietdockercicd' # Su Azure - App Service>Deployment Center> Se non lo si trova creare prima un gruppo di risorse
+          slot-name: 'production'
+          publish-profile: ${{ secrets.PublishProfile }}
+          images: 'index.docker.io/${{ secrets.ContainerUsername }}/dockercicdnginx:${{ github.sha}}'
+# Il parametro PublishProfile è un file XML contenente le credenziali di accesso per pubblicare l'applicazione web su Azure. 
+# Per trovare il file di PublishProfile su Azure Portal, segui questi passaggi:
+# 1.Accedi ad Azure Portal (https://portal.azure.com/) e cerca "App per servizi Web (Linux)"
+# 2.Scegli l'opzione "Pubblicazione continua" nel menu di sinistra e segui le istruzioni per configurare il rilascio continuo.
+# Potrebbe essere necessario selezionare il provider di origine del codice (ad esempio GitHub, Bitbucket, Azure Repos, etc.) e autenticare l'accesso.
+# 3.Quando si arriva alla fase di configurazione del rilascio, viene richiesto di scaricare il file di PublishProfile. Scarica il file e salvalo 
+#in un percorso noto sul tuo computer.
+# 4.Dovrai quindi caricare il file PublishProfile come un segreto nella sezione "Segreti" delle impostazioni del repository su GitHub. Puoi chiamare questo 
+# segreto come preferisci e assegnargli il contenuto del file PublishProfile scaricato. 
+
+
