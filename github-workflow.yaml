@@ -5,7 +5,7 @@ on:
 
 jobs:
   buildx:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -35,4 +35,4 @@ jobs:
           app-name: 'moseietdockercicd'
           slot-name: 'production'
           publish-profile: ${{ secrets.PublishProfile }}
-          images: 'index.docker.io/${{ secrets.ContainerUsername }}/dockercicdnginx:${{ github.sha}}
+          images: 'index.docker.io/${{ secrets.ContainerUsername }}/tes1t:${{ github.sha}}'
