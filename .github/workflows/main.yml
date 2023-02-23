@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       - uses: actions/checkout@v2
@@ -23,10 +23,10 @@ jobs:
       - name: Build and push container image to registry
         uses: docker/build-push-action@v2
         with:
-          context: ./
+          context: C:\Users\Moisht\Documents\Script Docker-Terraform\DockerCICD
           push: true
-          tags: index.docker.io/${{ secrets.ContainerUsername }}/dockercicdnginx:${{ github.sha }}
-          file: ./Dockerfile
+          tags: index.docker.io/${{ secrets.ContainerUsername }}/tes1t:${{ github.sha }}
+          file: C:\Users\Moisht\Documents\Script Docker-Terraform\DockerCICD\Dockerfile
 
   deploy:
     runs-on: ubuntu-latest
