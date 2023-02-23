@@ -27,6 +27,9 @@ jobs:
           push: true
           tags: index.docker.io/${{ secrets.ContainerUsername }}/tes1t:${{ github.sha }}
           file: C:\Users\Moisht\Documents\Script Docker-Terraform\DockerCICD\Dockerfile
+          build-args: |
+            --build-arg NODE_VERSION=14.18.1
+          builder: docker
 
   deploy:
     runs-on: ubuntu-latest
